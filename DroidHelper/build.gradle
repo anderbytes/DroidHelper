@@ -21,22 +21,10 @@ afterEvaluate {
                 artifactId = 'DroidHelper'
                 version = '1.0'
             }
-            // Creates a Maven publication called “debug”.
-            debug(MavenPublication) {
-                // Applies the component for the debug build variant.
-                from components.debug
 
-                groupId = 'com.github.anderbytes'
-                artifactId = 'DroidHelper-debug'
-                version = '1.0'
-            }
         }
     }
 }
-
-
-group 'com.github.anderbytes'
-
 
 android {
     compileSdk 30
