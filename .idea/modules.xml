@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelperRunner.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelperRunner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelperRunner.DroidHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelperRunner.DroidHelper.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/My_Application.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/My_Application.app.iml" />
     </modules>
   </component>
