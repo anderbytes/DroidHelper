@@ -1,55 +1,66 @@
 package br.com.andersonp.droidhelper
 
 import android.util.Log
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.view.children
+import br.com.andersonp.droidhelper.Zero.ratio
 import br.com.andersonp.droidhelper.Zero.round
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+/**
+ * Nurse - The caring measures taker
+ *
+ * The methods here intend to be an useful pool of diagnostics and common queries
+ */
 object Nurse {
 
-    fun runDiags(tela: Boolean = true) {
-        if (tela) {
-            val densidadeValor = Architect.getScreenDensityMultiplier()
-            val densidadeDpi = Architect.getScreenDensityDPI()
-            val densidadeNome = Architect.getScreenDensityName()
-            val larguraTelaPx = Architect.getScreenWidthPX()
-            val larguraTelaDp = Architect.getScreenWidthDP()
-            val alturaTelaPx = Architect.getScreenHeightPX()
-            val alturaTelaDp = Architect.getScreenHeightDP()
-            val larguraTelaIn = (larguraTelaPx / densidadeDpi)
-            val alturaTelaIn = (alturaTelaPx / densidadeDpi)
-            val larguraTelaCm = (larguraTelaIn * 2.54).round()
-            val alturaTelaCm = (alturaTelaIn * 2.54).round()
+    /**
+     * Shows several screen stats for debugging reasons
+     *
+     */
+    fun screenStats() {
+        val densityValue = Architect.getScreenDensityMultiplier()
+        val densityDPI = Architect.getScreenDensityDPI()
+        val densityName = Architect.getScreenDensityName()
+        val screenWidthPX = Architect.getScreenWidthPX()
+        val screenWidthDP = Architect.getScreenWidthDP()
+        val screenHeightPX = Architect.getScreenHeightPX()
+        val screenHeightDP = Architect.getScreenHeightDP()
+        val screenWidthIN = (screenWidthPX / densityDPI)
+        val screenHeightIN = (screenHeightPX / densityDPI)
+        val screenWidthCM = (screenWidthIN * 2.54).round()
+        val screenHeightCM = (screenHeightIN * 2.54).round()
 
-            val polTela =
-                sqrt((larguraTelaPx / densidadeDpi).pow(2) + (alturaTelaPx / densidadeDpi).pow(2)).round()
+        val screenInches =
+            sqrt((screenWidthPX / densityDPI).pow(2) + (screenHeightPX / densityDPI).pow(2)).round()
 
-            fun ratio(dim1: Int, dim2: Int): String {
+        Log.d("DroidHelper_Screen", """-----------------------------------------------------------
+        Density: $densityValue ($densityName) -> ~$densityDPI dpi
+        Width: $screenWidthPX px ($screenWidthDP dp) -> $screenWidthIN in -> $screenWidthCM cm
+        Height: $screenHeightPX px ($screenHeightDP dp) -> $screenHeightIN in -> $screenHeightCM cm
+        Screen: $screenInches'' - Ratio: ${ratio(screenWidthPX, screenHeightPX, 9)}
+        -----------------------------------------------------------""".trimMargin())
+    }
 
-                val menor: Int = if (dim1 <= dim2) {
-                    dim1
+    /**
+     * Sends to logcat a tree-view of the indicated ViewGroup
+     */
+    fun treeView(v: ViewGroup, indLevel: String = "") {
+        val tagBranch: String = if (v.tag != null) { " - Tag: " + v.tag.toString() } else ""
+        Log.d("DroidHelper_TreeView",indLevel+"+ " + v.javaClass.simpleName + tagBranch)
+
+        if (v.children.count() > 0) {
+            v.children.forEach {
+                if (it is ViewGroup) {
+                    treeView(it, "$indLevel+")
                 } else {
-                    dim2
-                }
-                val divisor: Double = menor.toDouble() / 9
-                return if (dim1 == menor) {
-                    "(" + (dim2 / divisor) + ":9)"
-                } else {
-                    "(" + (dim1 / divisor) + ":9)"
+                    val tagNode: String = if (it.tag != null) { " - Tag: " + it.tag.toString() } else ""
+                    val textNode: String = if (it is TextView) { " - Text: " + it.text } else ""
+                    Log.d("DroidHelper_TreeView",indLevel+"++ " + it.javaClass.simpleName + tagNode + textNode)
                 }
             }
-
-            val ratio = ratio(larguraTelaPx, alturaTelaPx)
-            Log.d(
-                "Tela", """
-            -----------------------------------------------------------------------------
-            Densidade: $densidadeValor ($densidadeNome) -> ~$densidadeDpi dpi
-            Largura: $larguraTelaPx px ($larguraTelaDp dp) -> $larguraTelaIn in -> $larguraTelaCm cm
-            Largura: $alturaTelaPx px ($alturaTelaDp dp) -> $alturaTelaIn in -> $alturaTelaCm cm
-            Tela: $polTela'' - Ratio $ratio
-            -----------------------------------------------------------------------------
-        """.trimMargin()
-            )
         }
     }
 }

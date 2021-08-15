@@ -1,13 +1,12 @@
 package br.com.andersonp.droidhelper
 
 import android.content.res.Resources
-import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.view.children
 import kotlin.math.roundToInt
 
+/**
+ * Architect - The grand visual expert
+ *
+ */
 object Architect {
     /**
      * Gets the *WIDTH* of the screen in Pixels
@@ -18,18 +17,39 @@ object Architect {
         return Resources.getSystem().displayMetrics.widthPixels
     }
 
+    /**
+     * Gets the *HEIGHT* of the screen in Pixels
+     *
+     * @return Height in Pixels
+     */
     fun getScreenHeightPX(): Int {
         return Resources.getSystem().displayMetrics.heightPixels
     }
 
+    /**
+     * Gets the *DENSITY MULTIPLIER* of this device, using 1.0 (MDPI) as base
+     *
+     * @return Density Multiplier as Float
+     */
     fun getScreenDensityMultiplier(): Float {
         return Resources.getSystem().displayMetrics.density
     }
 
+    /**
+     * Gets the *ESTIMATED DENSITY* of the screen in DPI
+     * Uses 160 as a multiple related to 1.0 (MDPI) devices
+     *
+     * @return Density in DPI
+     */
     fun getScreenDensityDPI(): Float {
         return getScreenDensityMultiplier() * 160
     }
 
+    /**
+     * Gets the *NAME* related to the device density
+     *
+     * @return Density name as String
+     */
     fun getScreenDensityName(): String {
         return when(getScreenDensityMultiplier()) {
             0.75F -> "LDPI"
@@ -42,32 +62,25 @@ object Architect {
         }
     }
 
+    /**
+     * Gets the *WIDTH* of the screen in DP
+     *
+     * @return Width in DP
+     */
     fun getScreenWidthDP(): Int {
         return with (Resources.getSystem().displayMetrics) {
             (widthPixels / density).roundToInt()
         }
     }
 
+    /**
+     * Gets the *HEIGHT* of the screen in DP
+     *
+     * @return Height in DP
+     */
     fun getScreenHeightDP(): Int {
         return with (Resources.getSystem().displayMetrics) {
             (heightPixels / density).roundToInt()
-        }
-    }
-
-    fun treeView(v: View, indLevel: String = "") {
-        val tagBranch: String = if (v.tag != null) { " - Tag: " + v.tag.toString() } else ""
-        Log.d("treeView",indLevel+"+ " + v.javaClass.simpleName + tagBranch)
-
-        if (v is ViewGroup && v.children.count() > 0) {
-            v.children.forEach {
-                if (it is ViewGroup) {
-                    treeView(it, "$indLevel+")
-                } else {
-                    val tagNo: String = if (it.tag != null) { " - Tag: " + it.tag.toString() } else ""
-                    val textNo: String = if (it is TextView) { " - Text: " + it.text } else ""
-                    Log.d("treeView",indLevel+"++ " + it.javaClass.simpleName + tagNo + textNo)
-                }
-            }
         }
     }
 
