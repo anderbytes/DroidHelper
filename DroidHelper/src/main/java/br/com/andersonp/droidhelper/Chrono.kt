@@ -20,7 +20,6 @@ object Chrono {
     fun millisecondsToDatestring(timeinMillies: Long, pattern: String = "yyyy-MM-dd HH:mm:ss", locale: Locale = Locale.getDefault()): String {
         val formatter = SimpleDateFormat(pattern, locale)
         return formatter.format(Date(timeinMillies))
-
     }
 
     /**
@@ -58,8 +57,28 @@ object Chrono {
      * @param locale
      * @return locale where to base this date calculation, defaults to System locale
      */
-    fun today(pattern: String = "dd/MM/yyyy", locale:Locale = Locale.getDefault()): String {
+    fun today(pattern: String = "dd/MM/yyyy", locale: Locale = Locale.getDefault()): String {
         return SimpleDateFormat(pattern, locale).format(Calendar.getInstance().time)
+    }
+
+    /**
+     * Returns an integer representation of the current date, useful for day-related calculations
+     * that are are required to be repetitive, as a seed (Random methods)
+     *
+     * @return an Int number generated for this day
+     */
+    fun intOfDay(): Int {
+        return today(pattern="yyyyMMdd").toInt()
+    }
+
+    /**
+     * Returns an integer representation of the given date, useful for day-related calculations
+     * that are are required to be repetitive, as a seed (Random methods)
+     *
+     * @return an Int number generated for the given day
+     */
+    fun intOfDay(date: Date): Int {
+        return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date).toInt()
     }
 
 }

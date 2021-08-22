@@ -1,11 +1,13 @@
 package br.com.andersonp.droidhelper
 
 import android.app.Activity
-import android.content.Context
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
+import android.view.Window
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import br.com.andersonp.droidhelper.Butler.isPackageInstalled
 
 /**
  * Maestro - The smooth movements director
@@ -14,6 +16,33 @@ import androidx.fragment.app.Fragment
  */
 
 object Maestro {
+
+    /**
+     * From a Fragment, loads a dialog that behaves as a Loading Screen with the desired layout/view
+     *
+     * @param loadingScreenLayout the layout or view to be shown
+     * @return the Dialog of the loading screen to be dismissed on a future event
+     */
+    fun Fragment.loadingPopUp(loadingScreenLayout: Int): Dialog {
+        return requireActivity().loadingPopUp(loadingScreenLayout)
+    }
+
+    /**
+     * From an Activity, loads a dialog that behaves as a Loading Screen with the desired layout/view
+     *
+     * @param loadingScreenLayout the layout or view to be shown
+     * @return the Dialog of the loading screen to be dismissed on a future event
+     */
+    fun Activity.loadingPopUp(loadingScreenLayout: Int): Dialog {
+        return Dialog(this).apply {
+            window?.currentFocus
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(loadingScreenLayout)
+            setCancelable(false)
+            setOwnerActivity(this@loadingPopUp)
+            show()
+        }
+    }
 
     /**
      * Restarts the given fragment
@@ -45,20 +74,12 @@ object Maestro {
      * @param type the type of the url as one of the listed
      */
     fun Activity.openURL(url: String, type: UrlType? = null) {
-        openURL(url, type)
-    }
-
-    /**
-     * Open specified url on browser or app, from this Context
-     *
-     * @param url the internet path to be navigated
-     * @param type the type of the url as one of the listed
-     */
-    fun Context.openURL(url: String, type: UrlType?) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        intent.setPackage(type?.androidApp)
-        ContextCompat.startActivity(this, intent, null)
+        if (isPackageInstalled(type?.androidApp)) {
+            intent.setPackage(type?.androidApp)
+        }
 
+        ContextCompat.startActivity(this, intent, null)
     }
 
     /**

@@ -1,6 +1,8 @@
 package br.com.andersonp.droidhelper
 
+import br.com.andersonp.droidhelper.Chrono.intOfDay
 import java.math.BigDecimal
+import kotlin.random.Random
 
 /**
  * Zero - The exact calculations nerd
@@ -29,7 +31,6 @@ object Zero {
         return this.toBigDecimal().setScale(digits, BigDecimal.ROUND_HALF_EVEN)
     }
 
-
     /**
      * Gets the Ratio of two number given a base
      *
@@ -48,5 +49,14 @@ object Zero {
         } else {
             "(${firstSize/divider}:$base)"
         }
+    }
+
+    /**
+     * Generate a seed (class Random) for the current date
+     *
+     * @return object (as Random class) to be used as seed
+     */
+    fun seedOfDay(): Random {
+        return Random(intOfDay())
     }
 }
