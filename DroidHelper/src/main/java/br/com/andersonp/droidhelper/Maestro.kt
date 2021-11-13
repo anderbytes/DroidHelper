@@ -8,6 +8,8 @@ import android.view.Window
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import br.com.andersonp.droidhelper.Butler.isPackageInstalled
+import br.com.andersonp.droidhelper.Butler.writeTextClipboard
+import java.lang.Exception
 
 /**
  * Maestro - The smooth movements director
@@ -96,6 +98,49 @@ object Maestro {
         FACEBOOK("com.facebook.katana"),
         YOUTUBE("com.google.android.youtube"),
         GOOGLEMAPS("com.google.android.gms.maps"),
+
+    }
+
+    /**
+     * Send email using an existing email client on the device, from this Fragment
+     *
+     * @param recipient the destination email
+     * @param subject Optional. The subject of the email
+     * @param message Optional. The content of the email
+     * @param failCode Optional. Code to run in the case of not mail client not found
+     * @param copyToClipdOnError Whether the email will be copied to clipboard in the case of not having an email client installed. Defaults to FALSE.
+     */
+    fun Fragment.sendEmail(recipient: String, subject: String = "", message: String = "", failCode: (() -> Unit)? = null, copyToClipdOnError: Boolean = false) {
+        requireActivity().sendEmail(recipient, subject, message, failCode, copyToClipdOnError)
+    }
+
+    /**
+     * Send email using an existing email client on the device, from this Activity
+     *
+     * @param recipient the destination email
+     * @param subject Optional. The subject of the email
+     * @param message Optional. The content of the email
+     * @param failCode Optional. Code to run in the case of not mail client not found
+     * @param copyToClipdOnError Whether the email will be copied to clipboard in the case of not having an email client installed. Defaults to FALSE.
+     */
+    fun Activity.sendEmail(recipient: String, subject: String = "", message: String = "", failCode: (() -> Unit)? = null, copyToClipdOnError: Boolean = false) {
+
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, message)
+        }
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+
+            if (copyToClipdOnError) {
+                writeTextClipboard(label = "Email", text = recipient)
+            }
+            // run code if search for installed email client fails
+            failCode?.invoke()
+        }
 
     }
 

@@ -1,5 +1,8 @@
 package br.com.andersonp.droidhelper
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,9 +56,9 @@ object Chrono {
     /**
      * Returns the date format of now
      *
-     * @param pattern the date pattern to be used as template
-     * @param locale
-     * @return locale where to base this date calculation, defaults to System locale
+     * @param pattern the date pattern to be used as template (Ex: dd/MM/yyyy)
+     * @param locale where to base this date calculation, defaults to System locale
+     * @return locale the date in string format
      */
     fun today(pattern: String = "dd/MM/yyyy", locale: Locale = Locale.getDefault()): String {
         return SimpleDateFormat(pattern, locale).format(Calendar.getInstance().time)
@@ -81,4 +84,30 @@ object Chrono {
         return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date).toInt()
     }
 
+    /**
+     * Wait [waitedTime] milisseconds then run [code], if given
+     *
+     * @param waitedTime the number of milisseconds to wait before running code or continuing to run
+     * @param code the code to be executed after the given time (optional)
+     */
+    fun waitTime(waitedTime: Long, code: () -> Unit = {}) {
+        Handler(Looper.getMainLooper()).postDelayed(code, waitedTime)
+    }
+
+    /**
+     * Runs a block of code and returns the total of milliseconds spent on it
+     *
+     * @param command the code to be run
+     * @param verbose whether stats of time will be given at Logcat
+     * @return the total spent milliseconds in that code
+     */
+    fun lapTime(command: () -> Unit, verbose: Boolean = false): Long {
+        val startTime = System.currentTimeMillis()
+        command.invoke()
+        val endTime = System.currentTimeMillis()
+        val total = endTime - startTime
+
+        if (verbose) Log.i("LapTime","The command started at $startTime and ended at $endTime, spending a total of $total milliseconds.")
+        return total
+    }
 }
