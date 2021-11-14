@@ -54,10 +54,10 @@ Go to the build.gradle of your project, and inser the following link in the depe
 ```gradle
 dependencies {
   ...
-  implementation 'com.github.anderbytes:DroidHelper:0.96'
+  implementation 'com.github.anderbytes:DroidHelper:1.22'
 }
 ```
 
 ## 📃 Changelog
-<li>1.20 - First official release
+<li>1.22 - First official release
 <li>0.96 - Still in alpha. Will add incremental new methods after 1.00
