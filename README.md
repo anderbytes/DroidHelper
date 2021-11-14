@@ -59,4 +59,5 @@ dependencies {
 ```
 
 ## 📃 Changelog
+<li>1.20 - First official release
 <li>0.96 - Still in alpha. Will add incremental new methods after 1.00
