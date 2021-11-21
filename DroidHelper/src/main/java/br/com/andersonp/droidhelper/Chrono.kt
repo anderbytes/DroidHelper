@@ -110,4 +110,34 @@ object Chrono {
         if (verbose) Log.i("LapTime","The command started at $startTime and ended at $endTime, spending a total of $total milliseconds.")
         return total
     }
+
+    /**
+     * Converts from minutes (counting from Midnight) to a readable time format
+     *
+     * @param minutesFromMidnight minutes passed from Midnight, to be converted
+     * @param to24hourFormat whether the time will be formatted in 24-hour format
+     * @return the converted time as a readable string
+     */
+    fun minutesToTime(minutesFromMidnight: Int, to24hourFormat: Boolean = true): String {
+        lateinit var postTime: String
+        lateinit var hourString: String
+
+        var hours: Int = kotlin.math.floor((minutesFromMidnight / 60).toDouble()).toInt()
+
+        if (to24hourFormat) {
+            postTime = "h"
+        } else {
+            if (hours >= 12) {
+                hours -= 12
+                postTime = " PM"
+            } else {
+                postTime = " AM"
+            }
+        }
+
+        hourString = hours.toString().padStart(2,'0')
+        val minutesString: String = minutesFromMidnight.mod(60).toString().padStart(2, '0')
+
+        return ("$hourString:$minutesString$postTime")
+    }
 }
