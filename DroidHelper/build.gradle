@@ -19,7 +19,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.anderbytes'
                 artifactId = 'DroidHelper'
-                version = '1.22'
+                version = '1.24'
             }
 
         }
@@ -33,7 +33,7 @@ android {
         minSdk 23
         targetSdk 30
         versionCode 1
-        versionName "1.22"
+        versionName "1.24"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
