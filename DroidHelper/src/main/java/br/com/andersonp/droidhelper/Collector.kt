@@ -5,6 +5,7 @@ package br.com.andersonp.droidhelper
  *
  * @constructor Create empty Collector
  */
+@Suppress("unused")
 object Collector {
 
     /**

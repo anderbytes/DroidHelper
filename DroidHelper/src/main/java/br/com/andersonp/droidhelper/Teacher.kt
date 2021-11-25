@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Teacher - The proficient words lord
  *
  */
+@Suppress("unused")
 object Teacher {
 
     /**

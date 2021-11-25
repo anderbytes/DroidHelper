@@ -9,6 +9,7 @@ import kotlin.random.Random
  *
  * The methods here intend to allow simpler math calculations
  */
+@Suppress("unused")
 object Zero {
 
     /**
@@ -18,7 +19,7 @@ object Zero {
      * @return rounded BigDecimal equivalent
      */
     fun Float.round(digits: Int = 2): BigDecimal {
-        return this.toBigDecimal().setScale(digits, BigDecimal.ROUND_HALF_EVEN)
+        return toBigDecimal().setScale(digits, BigDecimal.ROUND_HALF_EVEN)
     }
 
     /**
@@ -28,7 +29,7 @@ object Zero {
      * @return rounded BigDecimal equivalent
      */
     fun Double.round(digits: Int = 2): BigDecimal {
-        return this.toBigDecimal().setScale(digits, BigDecimal.ROUND_HALF_EVEN)
+        return toBigDecimal().setScale(digits, BigDecimal.ROUND_HALF_EVEN)
     }
 
     /**

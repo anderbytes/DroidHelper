@@ -10,6 +10,7 @@ import java.util.*
  * Chrono - The manager of time
  *
  */
+@Suppress("unused")
 object Chrono {
 
     /**
@@ -49,8 +50,7 @@ object Chrono {
      * @return the calculated date/time
      */
     fun minutesAhead(qty: Int): Long {
-        val calendar: Calendar = Calendar.getInstance()
-        return calendar.timeInMillis + (qty * 1000 * 60)
+        return Calendar.getInstance().timeInMillis + (qty * 1000 * 60)
     }
 
     /**

@@ -13,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec
  * Enigma - The mysterious puzzle maker and solver
  *
  */
+@Suppress("unused")
 object Enigma {
 
     /**

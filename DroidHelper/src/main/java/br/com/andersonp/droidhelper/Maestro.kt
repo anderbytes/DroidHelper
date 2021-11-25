@@ -16,7 +16,7 @@ import java.lang.Exception
  *
  * The methods here intend to allow simpler navigations around the app
  */
-
+@Suppress("unused")
 object Maestro {
 
     /**
@@ -77,8 +77,11 @@ object Maestro {
      */
     fun Activity.openURL(url: String, type: UrlType? = null) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        if (isPackageInstalled(type?.androidApp)) {
-            intent.setPackage(type?.androidApp)
+
+        type?.let {
+            if (isPackageInstalled(type.androidApp)) {
+                intent.setPackage(type.androidApp)
+            }
         }
 
         ContextCompat.startActivity(this, intent, null)
@@ -98,7 +101,6 @@ object Maestro {
         FACEBOOK("com.facebook.katana"),
         YOUTUBE("com.google.android.youtube"),
         GOOGLEMAPS("com.google.android.gms.maps"),
-
     }
 
     /**

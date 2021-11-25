@@ -13,10 +13,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import br.com.andersonp.droidhelper.Enigma.md5
 
+
 /**
  * Butler - The convenient tools handler
  *
  */
+@Suppress("unused")
 object Butler {
 
     // SYSTEM INFO
@@ -98,7 +100,7 @@ object Butler {
      * @param packageName name of the package to be searched for
      * @return true if the package is installed
      */
-    fun Fragment.isPackageInstalled(packageName: String?): Boolean {
+    fun Fragment.isPackageInstalled(packageName: String): Boolean {
         return requireActivity().isPackageInstalled(packageName)
     }
 
@@ -108,9 +110,7 @@ object Butler {
      * @param packageName name of the package to be searched for
      * @return true if the package is installed
      */
-    fun Activity.isPackageInstalled(packageName: String?): Boolean {
-        if (packageName == null) return false
-
+    fun Activity.isPackageInstalled(packageName: String): Boolean {
         return try {
             this.packageManager.getPackageInfo(packageName, 0)
             true

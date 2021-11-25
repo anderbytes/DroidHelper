@@ -14,6 +14,7 @@ import kotlin.math.sqrt
  *
  * The methods here intend to be an useful pool of diagnostics and common queries
  */
+@Suppress("unused")
 object Nurse {
 
     /**
