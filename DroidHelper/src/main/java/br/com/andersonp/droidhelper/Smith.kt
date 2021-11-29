@@ -2,9 +2,13 @@ package br.com.andersonp.droidhelper
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import br.com.andersonp.droidhelper.auxiliarclasses.FragmentsViewPager2Adapter
@@ -24,8 +28,8 @@ object Smith {
      *
      */
     fun createTextView(context: Context, label: String, bgColor: Int? = null, bgTintColor: Int? = null, bgTintMode: PorterDuff.Mode? = null, size: Float = 12f,
-                       bgResource: Int? = null, minimumWidth: Int = 48, minimumHeight: Int = 48, alphaTransparency: Float = 1F,
-                        leftPad: Int = 16, topPad: Int = 16, rightPad: Int = 16, bottomPad: Int = 16,
+                       bgResource: Int? = null, minimumWidth: Int = 48, minimumHeight: Int = 48, alphaTransparency: Float = 1F, textTypeface: Typeface? = null,
+                       leftPad: Int = 16, topPad: Int = 16, rightPad: Int = 16, bottomPad: Int = 16,
                        leftMargin: Int = 4, topMargin: Int = 4, rightMargin: Int = 4, bottomMargin: Int = 4): TextView {
 
         return (TextView(context)).apply {
@@ -35,6 +39,7 @@ object Smith {
             bgResource?.let { setBackgroundResource(it) }
             bgTintColor?.let { backgroundTintList = ColorStateList.valueOf(it) }
             bgTintMode?.let { backgroundTintMode = it }
+            textTypeface?.let { typeface = it }
             minWidth = minimumWidth
             minHeight = minimumHeight
             alpha = alphaTransparency
@@ -57,6 +62,7 @@ object Smith {
      * @param selectedTab (optional) the starting selected tab
      * @param offscreenPages (optional) the number of tabs to be preloaded in memory
      * @param enableTabSwiping (optional) whether tab swiping is allowed
+     * @param scrollable (optional) whether tabs can be scrolled. False allows fullwidth even with few tabs, while scrollable doesn't
      * @param tabBackColor (optional) the background color of the tabs
      * @param indicatorColor (optional) the color of the bottom indicator
      * @param rippleColor (optional) the color of the ripple effect
@@ -65,8 +71,25 @@ object Smith {
      * @param runOnTabSelected (optional) code to be executed on Tab Selection listener
      * @param runOnTabUnselected (optional) code to be executed on Tab Unselection listener
      */
-    fun implementViewPager(fragment: Fragment, fragsList: List<Fragment>, namesTabs: List<String>, existingAdapter: FragmentsViewPager2Adapter? = null, tabLayout: TabLayout, viewPager: ViewPager2, selectedTab: Int = 0, offscreenPages: Int = 2, enableTabSwiping: Boolean = true,
-                       tabBackColor: Int = 0xFFFFFF, indicatorColor: Int = 0x000000, rippleColor: Int = 0x333333, tabTextColor: Int = 0x666666, selectedTabTextColor: Int = 0x000000, runOnTabSelected: ((tab: TabLayout.Tab?) -> Unit)? = null, runOnTabUnselected: ((tab: TabLayout.Tab?) -> Unit)? = null) {
+    fun implementViewPager(
+        fragment: Fragment,
+        fragsList: List<Fragment>,
+        namesTabs: List<String>,
+        existingAdapter: FragmentsViewPager2Adapter? = null,
+        tabLayout: TabLayout,
+        viewPager: ViewPager2,
+        selectedTab: Int = 0,
+        offscreenPages: Int = 2,
+        enableTabSwiping: Boolean = true,
+        scrollable: Boolean = false,
+        @ColorInt tabBackColor: Int = Color.parseColor("#FFFFFF"),
+        @ColorInt indicatorColor: Int = Color.parseColor("#000000"),
+        @ColorRes rippleColor: Int? = null,
+        @ColorInt tabTextColor: Int = Color.parseColor("#666666"),
+        @ColorInt selectedTabTextColor: Int = Color.parseColor("#000000"),
+        runOnTabSelected: ((tab: TabLayout.Tab?) -> Unit)? = null,
+        runOnTabUnselected: ((tab: TabLayout.Tab?) -> Unit)? = null,
+    ) {
 
         // Pre-Checks
         if (selectedTab > fragsList.size - 1) error("Selected tab index bigger than the actual number of fragments")
@@ -90,8 +113,9 @@ object Smith {
         tabLayout.apply {
             setBackgroundColor(tabBackColor)
             setSelectedTabIndicatorColor(indicatorColor)
-            setTabRippleColorResource(rippleColor)
+            rippleColor?.let { setTabRippleColorResource(it) }
             setTabTextColors(tabTextColor, selectedTabTextColor)
+            tabMode = if (scrollable) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
         }
 
         // Listeners
