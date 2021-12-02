@@ -1,5 +1,8 @@
 package br.com.andersonp.droidhelper
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
@@ -63,5 +66,21 @@ object Nurse {
                 }
             }
         }
+    }
+
+    /**
+     * Checks for Internet availability
+     *
+     * Important: The other code using this one needs one of these permissions enabled: ACCESS_NETWORK_STATE or INTERNET
+     *
+     * @param context any context to base the query on
+     * @return whether Internet is reachable or not at the moment
+     *
+     */
+    @SuppressLint("MissingPermission")
+    fun isInternetAvailable(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting
     }
 }

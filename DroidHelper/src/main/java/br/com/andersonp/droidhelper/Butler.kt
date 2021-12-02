@@ -48,7 +48,7 @@ object Butler {
      *
      */
     fun Fragment.hideKeyboard() {
-        requireActivity().hideKeyboard()
+        view?.let { activity?.hideKeyboard(it) }
     }
 
     /**
