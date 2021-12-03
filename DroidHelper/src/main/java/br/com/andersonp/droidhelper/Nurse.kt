@@ -1,8 +1,13 @@
 package br.com.andersonp.droidhelper
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
@@ -15,7 +20,7 @@ import kotlin.math.sqrt
 /**
  * Nurse - The caring measures taker
  *
- * The methods here intend to be an useful pool of diagnostics and common queries
+ * The methods here intend to be an useful pool of diagnostics and common system-wide queries
  */
 @Suppress("unused")
 object Nurse {
@@ -71,16 +76,53 @@ object Nurse {
     /**
      * Checks for Internet availability
      *
-     * Important: The other code using this one needs one of these permissions enabled: ACCESS_NETWORK_STATE or INTERNET
-     *
      * @param context any context to base the query on
      * @return whether Internet is reachable or not at the moment
      *
      */
+
     @SuppressLint("MissingPermission")
-    fun isInternetAvailable(context: Context): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting
+    fun isInternetAvailable(context: Context?): Boolean {
+        if (context == null) {
+            Log.d("Net", "Can't query internet because context here is missing")
+            return false
+        }
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                when {
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                        return true
+                    }
+                }
+            }
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Returns information of a package installed on the device
+     *
+     * @param pkg (optional) the full name of the package installed
+     * @return the package info object, or null if package is not found
+     */
+    fun Activity.packageInfo(pkg: String = this.packageName): PackageInfo? {
+        return try { packageManager.getPackageInfo(pkg, 0) }
+        catch (e: PackageManager.NameNotFoundException) {
+            null
+        }
     }
 }

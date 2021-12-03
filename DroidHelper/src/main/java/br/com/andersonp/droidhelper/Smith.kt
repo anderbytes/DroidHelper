@@ -2,9 +2,9 @@ package br.com.andersonp.droidhelper
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.Typeface
+import android.graphics.*
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.RectShape
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -131,6 +131,26 @@ object Smith {
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
+    }
+
+    /**
+     * Creates a rectangle/square Bitmap filled with the given color
+     *
+     * @param width the width of the Bitmap shape
+     * @param height the height of the Bitmap shape
+     * @param hexColor (optional) the color of the Bitmap, in hex format. Defaults on solid Black
+     */
+    fun drawRectangularBitmap(width: Int, height: Int, hexColor: String = "#000000"): Bitmap {
+
+        val bitmap: Bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+        // draw rectangle shape to canvas
+        val shapeDrawable = ShapeDrawable(RectShape())
+
+        shapeDrawable.setBounds( 0, 0, width, height)
+        shapeDrawable.paint.color = Color.parseColor(hexColor)
+        shapeDrawable.draw(Canvas(bitmap))
+        return bitmap
     }
 
 }
