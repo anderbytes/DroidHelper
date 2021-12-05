@@ -65,23 +65,17 @@ object Chrono {
     }
 
     /**
-     * Returns an integer representation of the current date, useful for day-related calculations
-     * that are are required to be repetitive, as a seed (Random methods)
-     *
-     * @return an Int number generated for this day
-     */
-    fun intOfDay(): Int {
-        return today(pattern="yyyyMMdd").toInt()
-    }
-
-    /**
-     * Returns an integer representation of the given date, useful for day-related calculations
-     * that are are required to be repetitive, as a seed (Random methods)
+     * Returns an integer representation of the given date (or today, if date not given), useful for
+     * day-related calculations that are required to be repeatable, as a seed (Random methods)
      *
      * @return an Int number generated for the given day
      */
-    fun intOfDay(date: Date): Int {
-        return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date).toInt()
+    fun intOfDay(date: Date? = null): Int {
+        date?.let {
+            return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date).toInt()
+        } ?: run {
+            return today(pattern="yyyyMMdd").toInt()
+        }
     }
 
     /**

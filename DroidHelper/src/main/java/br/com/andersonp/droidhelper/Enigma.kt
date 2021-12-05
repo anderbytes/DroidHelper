@@ -19,23 +19,29 @@ object Enigma {
     /**
      * Returns the MD5 hash of the given String
      *
+     * @param allCaps whether the result has to have all capitalized characters
      * @return MD5 hash value
      */
-    fun String.md5(): String {
-        val md = MessageDigest.getInstance("MD5")
-        return BigInteger(1, md.digest(this.toByteArray())).toString(16).padStart(32, '0')
+    fun String.md5(allCaps: Boolean = true): String {
+        val digestInstance: MessageDigest = MessageDigest.getInstance("MD5")
+        var calculatedMD5: String = BigInteger(1, digestInstance.digest(this.toByteArray())).toString(16).padStart(32, '0')
+        if (allCaps) calculatedMD5 = calculatedMD5.uppercase()
+        return calculatedMD5
     }
 
     /**
      * Returns the SHA256 hash of the given String
      *
+     * @param allCaps whether the result has to have all capitalized characters
      * @return SHA256 hash value
      */
-    fun String.sha256(): String {
+    fun String.sha256(allCaps: Boolean = true): String {
         val bytes = this.toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        return digest.fold("", { str, it -> str + "%02x".format(it) })
+        val digestInstance: MessageDigest = MessageDigest.getInstance("SHA-256")
+        val finalDigest = digestInstance.digest(bytes)
+        var calculatedSHA256: String = finalDigest.fold("", { str, it -> str + "%02x".format(it) })
+        if (allCaps) calculatedSHA256 = calculatedSHA256.uppercase()
+        return calculatedSHA256
     }
 
     /**

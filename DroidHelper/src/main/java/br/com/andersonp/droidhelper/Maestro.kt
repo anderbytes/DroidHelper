@@ -2,13 +2,18 @@ package br.com.andersonp.droidhelper
 
 import android.app.Activity
 import android.app.Dialog
+import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.View
 import android.view.Window
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import br.com.andersonp.droidhelper.Butler.getActivity
 import br.com.andersonp.droidhelper.Butler.isPackageInstalled
 import br.com.andersonp.droidhelper.Butler.writeTextClipboard
+import br.com.andersonp.droidhelper.auxiliarclasses.UrlType
 import java.lang.Exception
 
 /**
@@ -20,29 +25,58 @@ import java.lang.Exception
 object Maestro {
 
     /**
-     * From a Fragment, loads a dialog that behaves as a Loading Screen with the desired layout/view
+     * Loads a simple dialog with a spinner and a message
      *
-     * @param loadingScreenLayout the layout or view to be shown
-     * @return the Dialog of the loading screen to be dismissed on a future event
+     * Don't forget to dismiss() the loader after using it
+     *
+     * @param message the text shown beside the spinner
+     * @param (optional) showOnCreate whether the Dialog needs to be shown right after the creation
+     * @return the ProgressDialog of the loading screen
      */
-    fun Fragment.loadingPopUp(loadingScreenLayout: Int): Dialog {
-        return requireActivity().loadingPopUp(loadingScreenLayout)
+    fun Context.showLoadingMessage(message: String, showOnCreate: Boolean = true): ProgressDialog {
+        return ProgressDialog(this).apply {
+            setMessage(message)
+            setProgressStyle(ProgressDialog.STYLE_SPINNER)
+            setCancelable(false)
+            if (showOnCreate) show()
+        }
     }
 
     /**
-     * From an Activity, loads a dialog that behaves as a Loading Screen with the desired layout/view
+     * Loads a dialog that behaves as a Loading Screen with the desired view
      *
-     * @param loadingScreenLayout the layout or view to be shown
+     * Don't forget to dismiss() the loader after using it
+     *
+     * @param loadingScreenView the view to be shown
+     * @param (optional) showOnCreate whether the Dialog needs to be shown right after the creation
+     * @param (optional) ownerActivity an activity to bound this dialog to, if necessary
+     * @return the Dialog of the loading screen
+     */
+    fun Context.showLoadingView(loadingScreenView: View, showOnCreate: Boolean = true, ownerActivity: Activity? = null): Dialog {
+        return Dialog(this).apply {
+            window?.currentFocus
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(loadingScreenView)
+            setCancelable(false)
+            ownerActivity?.let { setOwnerActivity(it)}
+            if (showOnCreate) show()
+        }
+    }
+
+    /**
+     * Loads a dialog that behaves as a Loading Screen with the desired layout
+     *
+     * @param loadingScreenLayout the layout to be shown
      * @return the Dialog of the loading screen to be dismissed on a future event
      */
-    fun Activity.loadingPopUp(loadingScreenLayout: Int): Dialog {
+    fun Activity.showLoadingLayout(loadingScreenLayout: Int, showOnCreate: Boolean = true): Dialog {
         return Dialog(this).apply {
             window?.currentFocus
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(loadingScreenLayout)
             setCancelable(false)
-            setOwnerActivity(this@loadingPopUp)
-            show()
+            setOwnerActivity(this@showLoadingLayout)
+            if (showOnCreate) show()
         }
     }
 
@@ -60,60 +94,23 @@ object Maestro {
     }
 
     /**
-     * Open specified url on browser or app, from this Fragment
-     *
-     * @param url the internet path to be navigated
-     * @param type the type of the url as one of the listed
-     */
-    fun Fragment.openURL(url: String, type: UrlType? = null) {
-        requireActivity().openURL(url, type)
-    }
-
-    /**
      * Open specified url on browser or app, from this Activity
      *
      * @param url the internet path to be navigated
      * @param type the type of the url as one of the listed
      */
-    fun Activity.openURL(url: String, type: UrlType? = null) {
+    fun Context.openURL(url: String, type: UrlType? = null) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
 
         type?.let {
-            if (isPackageInstalled(type.androidApp)) {
-                intent.setPackage(type.androidApp)
+            getActivity()?.let {
+                if (it.isPackageInstalled(type.androidApp)) {
+                    intent.setPackage(type.androidApp)
+                }
             }
         }
 
         ContextCompat.startActivity(this, intent, null)
-    }
-
-    /**
-     * Url type and it's associated common package name in Android
-     *
-     * @property androidApp name of the package
-     */
-    enum class UrlType(val androidApp: String) {
-        INSTAGRAM("com.instagram.android"),
-        LINKEDIN("com.linkedin.android"),
-        SPOTIFY("com.spotify.music"),
-        TED("com.ted.android"),
-        WHATSAPP("com.whatsapp"),
-        FACEBOOK("com.facebook.katana"),
-        YOUTUBE("com.google.android.youtube"),
-        GOOGLEMAPS("com.google.android.gms.maps"),
-    }
-
-    /**
-     * Send email using an existing email client on the device, from this Fragment
-     *
-     * @param recipient the destination email
-     * @param subject Optional. The subject of the email
-     * @param message Optional. The content of the email
-     * @param failCode Optional. Code to run in the case of not mail client not found
-     * @param copyToClipdOnError Whether the email will be copied to clipboard in the case of not having an email client installed. Defaults to FALSE.
-     */
-    fun Fragment.sendEmail(recipient: String, subject: String = "", message: String = "", failCode: (() -> Unit)? = null, copyToClipdOnError: Boolean = false) {
-        requireActivity().sendEmail(recipient, subject, message, failCode, copyToClipdOnError)
     }
 
     /**
