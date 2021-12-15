@@ -5,7 +5,6 @@ plugins {
     id 'maven-publish'
 }
 
-
 // Because the components are created only during the afterEvaluate phase, you must
 // configure your publications using the afterEvaluate() lifecycle method.
 afterEvaluate {
@@ -19,7 +18,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.anderbytes'
                 artifactId = 'DroidHelper'
-                version = '1.36'
+                version = '1.37'
             }
 
         }
@@ -27,13 +26,13 @@ afterEvaluate {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
         minSdk 23
-        targetSdk 30
+        targetSdk 31
         versionCode 1
-        versionName "1.36"
+        versionName "1.37"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

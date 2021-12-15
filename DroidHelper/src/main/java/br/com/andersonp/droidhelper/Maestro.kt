@@ -6,10 +6,12 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.view.Window
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import br.com.andersonp.droidhelper.Butler.getActivity
 import br.com.andersonp.droidhelper.Butler.isPackageInstalled
 import br.com.andersonp.droidhelper.Butler.writeTextClipboard
@@ -85,12 +87,27 @@ object Maestro {
      *
      */
     fun Fragment.restart() {
-        with(parentFragmentManager.beginTransaction()) {
+        parentFragmentManager.beginTransaction().apply {
             detach(this@restart)
             commitNow()
             attach(this@restart)
             commitNow()
         }
+    }
+
+    /**
+     * Restart the given Fragment Activity
+     *
+     */
+    fun FragmentActivity.restart() {
+        // All the fragments inside the FragmentManager must be destroyed or else chaos may occur
+        supportFragmentManager.fragments.forEach { frag ->
+            supportFragmentManager.beginTransaction().run {
+                remove(frag)
+                commitNow()
+            }
+        }
+        recreate()
     }
 
     /**

@@ -1,6 +1,6 @@
 package br.com.andersonp.droidhelper
 
-import android.annotation.SuppressLint
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageInfo
@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresPermission
 import androidx.core.view.children
 import br.com.andersonp.droidhelper.Zero.ratio
 import br.com.andersonp.droidhelper.Zero.round
@@ -80,8 +81,7 @@ object Nurse {
      * @return whether Internet is reachable or not at the moment
      *
      */
-
-    @SuppressLint("MissingPermission")
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     fun isInternetAvailable(context: Context?): Boolean {
         if (context == null) {
             Log.d("Net", "Can't query internet because context here is missing")
@@ -89,25 +89,20 @@ object Nurse {
         }
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
+        // There are different ways of checking this, depending on the Android version
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                when {
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                        return true
-                    }
-                }
+            capabilities?.let {
+                val hasCellular: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                val hasWifi: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                val hasEthernet: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+
+                return (hasCellular || hasWifi || hasEthernet)
             }
         } else {
             val activeNetworkInfo = connectivityManager.activeNetworkInfo
-            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
-                return true
+            activeNetworkInfo?.let {
+                return (it.isConnected)
             }
         }
         return false
