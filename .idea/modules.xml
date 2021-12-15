@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/My_Application.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/My_Application.app.iml" />
     </modules>
   </component>
 </project>
