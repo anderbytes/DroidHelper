@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelper.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelperLibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/DroidHelper/DroidHelper.DroidHelperLibrary.iml" />
     </modules>
   </component>
 </project>
