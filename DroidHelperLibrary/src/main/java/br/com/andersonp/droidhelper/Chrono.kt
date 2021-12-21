@@ -39,7 +39,7 @@ object Chrono {
      */
     fun dateToMilliseconds(year: Int, month: Int, day: Int, hour: Int = 0, minute: Int = 0, seconds: Int = 0): Long {
         val calendar: Calendar = Calendar.getInstance()
-        calendar.set(year, month, day, hour, minute, seconds)
+        calendar.set(year, month - 1, day, hour, minute, seconds)
         return calendar.timeInMillis
     }
 
