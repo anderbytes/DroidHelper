@@ -3,8 +3,13 @@ package br.com.andersonp.droidhelper
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
 import java.util.*
+import kotlin.math.floor
 
 /**
  * Chrono - The manager of time
@@ -13,8 +18,67 @@ import java.util.*
 @Suppress("unused")
 object Chrono {
 
+    // ******************** GETs / RETURNs *************************
+
     /**
-     * Converts a milliseconds value to a Date in String format
+     * Returns today in a Date object
+     *
+     * @param zeroTimeOfDay (optional) whether it will return the start of the day (zero hour). Defaults to FALSE.
+     * @return the today date object
+     */
+    fun today(zeroTimeOfDay: Boolean = false): LocalDateTime {
+        val newDate = LocalDateTime.now()
+        return if (zeroTimeOfDay) {
+            newDate.withHour(0).withMinute(0).withSecond(0).withNano(0)
+        } else {
+            newDate
+        }
+    }
+
+    /**
+     * Returns a readable text of today date
+     *
+     * @param dateFormat the date pattern to be used as template (Ex: dd/MM/yyyy)
+     * @param locale where to base this date calculation, defaults to System locale
+     * @return locale the date in string format
+     */
+    fun todayText(dateFormat: String = "dd/MM/yyyy", locale: Locale = Locale.getDefault()): String {
+        return DateTimeFormatter.ofPattern(dateFormat, locale).format(today())
+    }
+
+    // ******************** CONVERSIONS *************************
+
+    /**
+     * Simply converts a Long to a LocalDateTime object
+     *
+     * @return the converted LocalDateTime from the Long (must be in milliseconds)
+     */
+    fun Long.toLocalDateTime(): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(this), TimeZone.getDefault().toZoneId())
+    }
+
+    /**
+     * Returns the equivalent milliseconds of a LocalDateTime
+     *
+     * @return the Long equivalent (milliseconds) of the LocalDateTime
+     */
+    fun LocalDateTime.toMilli(): Long {
+        return (this.toEpochSecond(ZoneOffset.UTC) * 1000 + this[ChronoField.MILLI_OF_SECOND])
+    }
+
+    /**
+     * Converts a LocalDateTime to a readable string
+     *
+     * @param pattern the pattern format of the string returned
+     * @param locale the locale considered. Defaults to local
+     * @return the Local DateTime in a readable string
+     */
+    fun LocalDateTime.toReadable(pattern: String = "yyyy-MM-dd HH:mm:ss", locale: Locale = Locale.getDefault()): String {
+        return DateTimeFormatter.ofPattern(pattern, locale).format(this)
+    }
+
+    /**
+     * Converts a milliseconds value to a date in String format
      *
      * @param timeinMillies value of the time in Long format
      * @param pattern pattern which the date info will be filled with
@@ -22,12 +86,11 @@ object Chrono {
      * @return string with the date description in a readable format
      */
     fun millisecondsToDatestring(timeinMillies: Long, pattern: String = "yyyy-MM-dd HH:mm:ss", locale: Locale = Locale.getDefault()): String {
-        val formatter = SimpleDateFormat(pattern, locale)
-        return formatter.format(Date(timeinMillies))
+        return DateTimeFormatter.ofPattern(pattern, locale).format(timeinMillies.toLocalDateTime())
     }
 
     /**
-     * Find the specific Long that represents the given date
+     * Find the specific Long that represents the given date in milliseconds
      *
      * @param year the year to be used
      * @param month the month to be used
@@ -35,57 +98,23 @@ object Chrono {
      * @param hour (optional) the hour to be used
      * @param minute (optional) the minute to be used
      * @param seconds (optional) the seconds to be used
-     * @return the date as Long format
+     * @return the date as Long format (milliseconds)
      */
-    fun dateToMilliseconds(year: Int, month: Int, day: Int, hour: Int = 0, minute: Int = 0, seconds: Int = 0): Long {
-        val calendar: Calendar = Calendar.getInstance()
-        calendar.set(year, month - 1, day, hour, minute, seconds)
-        return calendar.timeInMillis
+    fun dateToMilliseconds(year: Int, month: Int, day: Int, hour: Int = 0, minute: Int = 0, seconds: Int = 0, nano: Int = 0): Long {
+        val date = LocalDateTime.of(year, month, day, hour, minute, seconds, nano)
+        return date.toMilli()
     }
 
-    /**
-     * Return get date/time of [qty] minutes ahead of the current date/time
-     *
-     * @param qty the number of minutes ahead
-     * @return the calculated date/time
-     */
-    fun minutesAhead(qty: Int): Long {
-        return Calendar.getInstance().timeInMillis + (qty * 1000 * 60)
-    }
+    // ******************** OPERATIONS *************************
 
     /**
-     * Returns the date format of now
-     *
-     * @param pattern the date pattern to be used as template (Ex: dd/MM/yyyy)
-     * @param locale where to base this date calculation, defaults to System locale
-     * @return locale the date in string format
-     */
-    fun today(pattern: String = "dd/MM/yyyy", locale: Locale = Locale.getDefault()): String {
-        return SimpleDateFormat(pattern, locale).format(Calendar.getInstance().time)
-    }
-
-    /**
-     * Returns an integer representation of the given date (or today, if date not given), useful for
-     * day-related calculations that are required to be repeatable, as a seed (Random methods)
-     *
-     * @return an Int number generated for the given day
-     */
-    fun intOfDay(date: Date? = null): Int {
-        date?.let {
-            return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date).toInt()
-        } ?: run {
-            return today(pattern="yyyyMMdd").toInt()
-        }
-    }
-
-    /**
-     * Wait [waitedTime] milisseconds then run [code], if given
+     * Wait [waitedTime] milisseconds then run [runAfter], if given
      *
      * @param waitedTime the number of milisseconds to wait before running code or continuing to run
-     * @param code the code to be executed after the given time (optional)
+     * @param runAfter the code to be executed after the given time (optional)
      */
-    fun waitTime(waitedTime: Long, code: () -> Unit = {}) {
-        Handler(Looper.getMainLooper()).postDelayed(code, waitedTime)
+    fun waitTime(waitedTime: Long, runAfter: () -> Unit = {}) {
+        Handler(Looper.getMainLooper()).postDelayed(runAfter, waitedTime)
     }
 
     /**
@@ -106,9 +135,9 @@ object Chrono {
     }
 
     /**
-     * Converts from minutes (counting from Midnight) to a readable time format
+     * Tells the calculated Time (counting minutes from Midnight)
      *
-     * @param minutesFromMidnight minutes passed from Midnight, to be converted
+     * @param minutesFromMidnight minutes passed from Midnight
      * @param to24hourFormat whether the time will be formatted in 24-hour format
      * @return the converted time as a readable string
      */
@@ -116,7 +145,7 @@ object Chrono {
         lateinit var postTime: String
         lateinit var hourString: String
 
-        var hours: Int = kotlin.math.floor((minutesFromMidnight / 60).toDouble()).toInt()
+        var hours: Int = floor((minutesFromMidnight / 60).toDouble()).toInt()
 
         if (to24hourFormat) {
             postTime = "h"

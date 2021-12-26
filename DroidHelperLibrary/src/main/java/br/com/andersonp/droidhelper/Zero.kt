@@ -1,7 +1,9 @@
 package br.com.andersonp.droidhelper
 
-import br.com.andersonp.droidhelper.Chrono.intOfDay
 import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.random.Random
 
 /**
@@ -60,4 +62,20 @@ object Zero {
     fun seedOfDay(): Random {
         return Random(intOfDay())
     }
+
+
+    /**
+     * Returns an integer representation of the given date (or today, if date not given), useful for
+     * day-related calculations that are required to be repeatable, as a seed (Random methods)
+     *
+     * @return an Int number generated for the given day
+     */
+    fun intOfDay(date: LocalDate? = null): Int {
+        date?.let {
+            return DateTimeFormatter.ofPattern("yyyyMMdd", Locale.getDefault()).format(date).toInt()
+        } ?: run {
+            return Chrono.todayText(dateFormat = "yyyyMMdd").toInt()
+        }
+    }
+
 }

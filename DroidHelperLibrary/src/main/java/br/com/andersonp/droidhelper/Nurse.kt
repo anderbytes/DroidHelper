@@ -78,33 +78,31 @@ object Nurse {
      * Checks for Internet availability
      *
      * @param context any context to base the query on
+     * @param avoidSlow do not consider Cellular (slower) networks
      * @return whether Internet is reachable or not at the moment
      *
      */
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
-    fun isInternetAvailable(context: Context?): Boolean {
+    fun isInternetAvailable(context: Context?, avoidSlow: Boolean = false): Boolean {
         if (context == null) {
             Log.d("Net", "Can't query internet because context here is missing")
             return false
         }
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        // There are different ways of checking this, depending on the Android version
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            capabilities?.let {
-                val hasCellular: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                val hasWifi: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                val hasEthernet: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        capabilities?.let {
+            val hasCellular: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+            val hasWifi: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+            val hasEthernet: Boolean = it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
 
-                return (hasCellular || hasWifi || hasEthernet)
-            }
-        } else {
-            val activeNetworkInfo = connectivityManager.activeNetworkInfo
-            activeNetworkInfo?.let {
-                return (it.isConnected)
+            return if (avoidSlow) {
+                (hasWifi || hasEthernet)
+            } else {
+                (hasCellular || hasWifi || hasEthernet)
             }
         }
+
         return false
     }
 
